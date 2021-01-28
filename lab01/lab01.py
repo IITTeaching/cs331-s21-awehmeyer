@@ -61,7 +61,8 @@ def test2():
 # EXERCISE 3
 #################################################################################
 def integer_right_triangles(p):
-    store =[] 
+    pass
+    store = []
     if p % 2 != 0 : return 0
     else : 
         count = 0
