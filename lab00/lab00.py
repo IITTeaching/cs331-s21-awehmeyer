@@ -4,6 +4,8 @@ def my_palindrome():
 
 ### Test of linkage ###
 
+### New comment ###
+
 # Do not change the main method
 def main():
     pal = my_palindrome()
