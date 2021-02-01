@@ -66,18 +66,12 @@ def integer_right_triangles(p):
     else :
         count = 0
         for b in range(1, p // 2):
- 
             a = p / 2 * ((p - 2 * b) / (p - b))
             inta = int(a)
             if (a == inta ):
- 
-                # make (a, b) pair in sorted order 
                 ab = tuple(sorted((inta, b)))
- 
-                # check to avoid duplicates
                 if ab not in store :
                     count += 1
-                    # store the new pair 
                     store.append(ab)
         return count
 
@@ -93,20 +87,18 @@ def test3():
 
 # implement this function
 def gen_pattern(chars):
-    submit = ""
+    width = len(chars)
+    forwards = chars
     backwards = chars[::-1]
-    width = len(chars) * len(chars) + 1
-    for i in range(1, len(chars)):
-        char = chars[-i]
-        print(char.center(width, "."))
-
-        # first = chars[-i].center(x, ".")
-        # print(first)
-        # middle_letters = chars[-1] + chars[0] + chars[-1]
-        # middle = ".".join(middle_letters)
-        # print(middle)
-        # print(first)
-    pass
+    half = []
+    for i in range(1, width+1):
+        current = backwards[0:i] + forwards[width-i+1:width]
+        current = '.'.join(current)
+        current = current.center(width * 4 - 3, ".")
+        half.append(current)
+        print(current)
+    for i in range(2, width+1):
+        print(half[-i])
 
 def test4():
     tc = unittest.TestCase()
