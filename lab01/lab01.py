@@ -61,19 +61,20 @@ def test2():
 # EXERCISE 3
 #################################################################################
 def integer_right_triangles(p):
-    store = []
-    if p % 2 != 0 : return 0
-    else :
-        count = 0
-        for b in range(1, p // 2):
-            a = p / 2 * ((p - 2 * b) / (p - b))
-            inta = int(a)
-            if (a == inta ):
-                ab = tuple(sorted((inta, b)))
-                if ab not in store :
-                    count += 1
-                    store.append(ab)
-        return count
+    
+    sum = 0
+    for a in range(1,p):
+        for b in range(a,p):
+            for c in range(b,p):
+                if (a + b + c == p) and (a<=b) and (b<c) and (a**2 + b**2 == c**2):
+                    sum += 1
+    return sum
+    
+    """ l = [(a,b,c) for a in range (1, p)
+                 for b in range (a, p)
+                 for c in range (b, p)
+                 if (a + b + c == p) and (a<=b) and (b<c) and (a**2 + b**2 == c**2)]
+    return len(l) """
 
 def test3():
     tc = unittest.TestCase()
