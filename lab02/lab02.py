@@ -122,12 +122,12 @@ def test2():
     tc = TestCase()
     random.seed(1234)
     simple_toks = [t.lower() for t in 'I really really like cake.'.split()]
-    print(gen_passage(compute_ngrams(simple_toks), 10))
-    #tc.assertEqual(gen_passage(compute_ngrams(simple_toks), 10), 'like cake. i really really really really like cake. i')
+    #print(gen_passage(compute_ngrams(simple_toks), 10))
+    tc.assertEqual(gen_passage(compute_ngrams(simple_toks), 10), 'like cake. i really really really really like cake. i')
 
-    #random.seed(1234)
-    #romeo_toks = [t.lower() for t in ROMEO_SOLILOQUY.split()]
-    #tc.assertEqual(gen_passage(compute_ngrams(romeo_toks), 10), 'too bold, \'tis not night. see, how she leans her')
+    random.seed(1234)
+    romeo_toks = [t.lower() for t in ROMEO_SOLILOQUY.split()]
+    tc.assertEqual(gen_passage(compute_ngrams(romeo_toks), 10), 'too bold, \'tis not night. see, how she leans her')
 
 def main():
     test1()
