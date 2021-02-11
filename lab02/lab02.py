@@ -34,7 +34,14 @@ ROMEO_SOLILOQUY = """
 # Implement this function
 def compute_ngrams(toks, n=2):
     """Returns an n-gram dictionary based on the provided list of tokens."""
-    pass
+    d = {}
+    for i in range(len(toks)-n+1):
+        current = toks[i]
+        if not d.get(current):
+            d[current] = []
+        tup = tuple(toks[i+1:i+n])
+        d[current].append(tup)
+    return d
 
 def test1():
     test1_1()
@@ -48,7 +55,9 @@ def test1_1():
 
     compute_ngrams(simple_toks)
     tc.assertEqual(compute_ngrams(simple_toks),
-                   {'i': [('really',)], 'like': [('cake.',)], 'really': [('really',), ('like',)]})
+                   {'i': [('really',)], 
+                   'like': [('cake.',)],
+                   'really': [('really',), ('like',)]})
     tc.assertEqual(compute_ngrams(simple_toks, n=3),
                    {'i': [('really', 'really')],
                     'really': [('really', 'like'), ('like', 'cake.')]})
@@ -93,7 +102,19 @@ def test1_2():
 ################################################################################
 # Implement this function
 def gen_passage(ngram_dict, length=100):
-    pass
+    words = list()
+    sorted_keys = sorted(ngram_dict.keys())
+    current_key = random.choice(sorted_keys)
+    while len(words) < length - len(ngram_dict[current_key][0]): ### Need to cut length by length of given tuple
+        words.append(current_key)
+        current_tuple = random.choice(ngram_dict[current_key])
+        words.append(" ".join(current_tuple))
+        next_key = current_tuple[-1]
+        if not ngram_dict.get(next_key):
+            current_key = random.choice(sorted_keys)
+        else:
+            current_key = next_key
+    return " ".join(words)
 
 # 50 Points
 def test2():
@@ -101,13 +122,12 @@ def test2():
     tc = TestCase()
     random.seed(1234)
     simple_toks = [t.lower() for t in 'I really really like cake.'.split()]
-    tc.assertEqual(gen_passage(compute_ngrams(simple_toks), 10),
-                   'like cake. i really really really really like cake. i')
+    #print(gen_passage(compute_ngrams(simple_toks), 10))
+    tc.assertEqual(gen_passage(compute_ngrams(simple_toks), 10), 'like cake. i really really really really like cake. i')
 
     random.seed(1234)
     romeo_toks = [t.lower() for t in ROMEO_SOLILOQUY.split()]
-    tc.assertEqual(gen_passage(compute_ngrams(romeo_toks), 10),
-                   'too bold, \'tis not night. see, how she leans her')
+    tc.assertEqual(gen_passage(compute_ngrams(romeo_toks), 10), 'too bold, \'tis not night. see, how she leans her')
 
 def main():
     test1()
