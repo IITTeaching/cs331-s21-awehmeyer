@@ -107,15 +107,21 @@ def gen_passage(ngram_dict, length=100):
     current_key = random.choice(sorted_keys)
     while len(words) < length - len(ngram_dict[current_key][0]): ### Need to cut length by length of given tuple
         words.append(current_key)
-        x = ngram_dict[current_key]
-        current_tuple = random.choice(x)
+        current_tuple = random.choice(ngram_dict[current_key])
         words.append(" ".join(current_tuple))
-        next_key = x[-1]
+        next_key = current_tuple[-1]
         if not ngram_dict.get(next_key):
             current_key = random.choice(sorted_keys)
         else:
             current_key = next_key
     return " ".join(words)
+
+    ### This solution below works only for ngram_dict sizes n <= 2 but somehow avoids the seemingly infinite loop the above solution gets into
+    #words.append(current_key)
+    #x = ngram_dict[current_key]
+    #current_tuple = random.choice(x)
+    #words.append(" ".join(current_tuple))
+    #next_key = x[-1]
 
 # 50 Points
 def test2():
