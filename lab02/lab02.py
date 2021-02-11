@@ -105,7 +105,7 @@ def gen_passage(ngram_dict, length=100):
     words = list()
     sorted_keys = sorted(ngram_dict.keys())
     current_key = random.choice(sorted_keys)
-    while len(words) < length - len(ngram_dict[current_key][0]): ### Need to cut length by length of given tuple
+    while len(words) < length: ### Need to cut length by length of given tuple
         words.append(current_key)
         current_tuple = random.choice(ngram_dict[current_key])
         words.append(" ".join(current_tuple))
@@ -114,6 +114,8 @@ def gen_passage(ngram_dict, length=100):
             current_key = random.choice(sorted_keys)
         else:
             current_key = next_key
+    while len(words) > length:
+        words.pop()
     return " ".join(words)
 
     ### This solution below works only for ngram_dict sizes n <= 2 but somehow avoids the seemingly infinite loop the above solution gets into
@@ -129,7 +131,7 @@ def test2():
     tc = TestCase()
     random.seed(1234)
     simple_toks = [t.lower() for t in 'I really really like cake.'.split()]
-    print(gen_passage(compute_ngrams(simple_toks), 10))
+    print(gen_passage(compute_ngrams(simple_toks), 20))
     #tc.assertEqual(gen_passage(compute_ngrams(simple_toks), 10), 'like cake. i really really really really like cake. i')
 
     #random.seed(1234)
