@@ -25,7 +25,7 @@ def mybinsearch(lst: List[T], elem: S, compare: Callable[[T, S], int]) -> int:
     high = len(lst) - 1
     low = 0
     while high - low >= 0:
-        mid = int(high + low / 2)
+        mid = int( (high + low) / 2)
         val = compare(lst[mid], elem)
         # -1 if mid < S
         # 1 is mid > S
@@ -172,6 +172,8 @@ def test2_2():
 # EXERCISE 3
 #################################################################################
 class SuffixArray():
+
+    document = None
 
     def __init__(self, document: str):
         
