@@ -183,19 +183,21 @@ class SuffixArray():
         self.suffixarray = mysort(arr, sufcomp)
 
     def positions(self, searchstr: str):
+                
+        bincomp = lambda i, str1: 0 if self.document[i:i+len(str1)] == str1 else (-1 if self.document[i:i+len(str1)] < str1 else 1)
+        index = mybinsearch(self.suffixarray, searchstr, bincomp)
         
-        ### look left and right if until you dont get a macth        
-        """
-        Returns all the positions of searchstr in the documented indexed by the suffix array.
-        """
-        pass
-
+        while index > 0:
+            temp = index-1
+            if self.document[self.suffixarray[temp]:self.suffixarray[temp] + len(searchstr)] != searchstr:
+                return [index]
+            else:
+                index = temp
+   
     def contains(self, searchstr: str):
         bincomp = lambda i, str1: 0 if self.document[i:i+len(str1)] == str1 else (-1 if self.document[i:i+len(str1)] < str1 else 1)
-        mybinsearch(self.suffixarray, searchstr, bincomp)
+        return mybinsearch(self.suffixarray, searchstr, bincomp) != -1
         
-
-
 # 40 Points
 def test3():
     """Test suffix arrays."""
