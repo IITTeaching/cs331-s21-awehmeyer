@@ -145,14 +145,25 @@ class ArrayList:
         """Inserts value at position idx, shifting the original elements down the
         list, as needed. Note that inserting a value at len(self) --- equivalent
         to appending the value --- is permitted. Raises IndexError if idx is invalid."""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        
+        assert(isinstance(idx, int))
+        nidx = self._normalize_idx(idx)
+        if nidx >= self.len:
+            raise IndexError
+        if self.len + 1 >= len(self.data):
+            newa = ConstrainedList(self.len * 2)
+            for i in range(0, self.len):
+                newa[i] = self.data[i]
+            self.data = newa
+        for i in range(self.len, nidx, -1):
+            self.data[i] = self.data[i-1]
+        self.data[nidx] = value
+        self.len += 1        
 
     def pop(self, idx=-1):
         """Deletes and returns the element at idx (which is the last element,
         by default)."""
-        return self.__delitem__(self, idx)
+        nidx = self._normalize_idx(idx)
+        return self.__delitem__(self, nidx)
 
     def remove(self, value):
         """Removes the first (closest to the front) instance of value from the
@@ -207,8 +218,6 @@ class ArrayList:
         this list between index i (inclusive) and j (exclusive). If j is not
         specified, search through the end of the list for value. If value
         is not in the list, raise a ValueError."""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
         if not j:
             end = self.len
         else:
@@ -319,7 +328,7 @@ def test_case_1():
         tc.assertEqual(lst[i], data[i])
 
     for i in range(0, -len(data), -1):
-        #tc.assertEqual(lst[i], data[i]) ## check if this is the correct test case
+        tc.assertEqual(lst[i], data[i]) ## check if this is the correct test case
         pass
     suc()
 
@@ -359,12 +368,8 @@ def test_case_3():
         data.append(to_add)
         lst.append(to_add)
     
-    print(data)
-
     tc.assertIsInstance(lst.data, ConstrainedList)
-    print(arrayListToList(lst))
     tc.assertEqual(data, arrayListToList(lst))
-
 
     for _ in range(100):
         to_ins = random.randrange(1000)
