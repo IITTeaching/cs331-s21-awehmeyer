@@ -147,7 +147,7 @@ class ArrayList:
         to appending the value --- is permitted. Raises IndexError if idx is invalid."""
         assert(isinstance(idx, int))
         nidx = self._normalize_idx(idx)
-        if nidx >= self.len:
+        if nidx > self.len:
             raise IndexError
         if self.len + 1 >= len(self.data):
             newa = ConstrainedList(self.len * 2)
@@ -163,14 +163,15 @@ class ArrayList:
         """Deletes and returns the element at idx (which is the last element,
         by default)."""
         nidx = self._normalize_idx(idx)
-        return self.__delitem__(self, nidx)
+        return self.__delitem__(nidx)
 
     def remove(self, value):
         """Removes the first (closest to the front) instance of value from the
         list. Raises a ValueError if value is not found in the list."""
         for i in range(self.len):
             if self.data[i] == value:
-                self.__delitem__(self, i)
+                self.__delitem__(i)
+                return
         raise ValueError
 
     ### predicates (T/F queries) ###
@@ -182,7 +183,8 @@ class ArrayList:
             for i in range(self.len):
                 if self.data[i] != other[i]:
                     return False
-        return True
+            return True
+        return False
 
     def __contains__(self, value):
         """Implements `val in self`. Returns true if value is found in this list."""
@@ -221,16 +223,15 @@ class ArrayList:
         if not j:
             end = self.len
         else:
-            for idx in range(i, end):
-                if self.data[i] == value:
-                    return idx
-            raise ValueError
-
+            end = self._normalize_idx(j)
+        for idx in range(i, end):
+            test = self.data[idx]
+            if self.data[idx] == value:
+                return idx
+        raise ValueError
 
     def count(self, value):
         """Returns the number of times value appears in this list."""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
         count = 0
         for i in range(self.len):
             if self.data[i] == value:
@@ -243,13 +244,9 @@ class ArrayList:
         """Implements `self + other_array_list`. Returns a new ArrayList
         instance that contains the values in this list followed by those
         of other."""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
         newa = ArrayList(self.len + len(other))
-        for i in range(self.len):
-            newa.append(self.data[i])
-        for i in range(len(other)):
-            newa.append(other[i])
+        newa.extend(self)
+        newa.extend(other)
         return newa
 
     def clear(self):
@@ -259,25 +256,22 @@ class ArrayList:
     def copy(self):
         """Returns a new ArrayList instance (with a separate data store), that
         contains the same values as this list."""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
         newa = ArrayList(self.len)
-        for i in range(self.len):
-            newa.append(self.data[i])
+        newa.extend(self)
         return newa
 
     def extend(self, other):
         """Adds all elements, in order, from other --- an Iterable --- to this list."""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        for el in other:
+            self.append(el)
 
 
     ### iteration ###
 
     def __iter__(self):
         """Supports iteration (via `iter(self)`)"""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        for i in range(self.len):
+            yield self.data[i]
 
 ################################################################################
 # TEST CASES
