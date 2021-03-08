@@ -38,23 +38,30 @@ class LinkedList:
                 nidx = 0
         return nidx
 
+    def _getnode_(self, idx):
+        assert(isinstance(idx, int))
+        idx = self._normalize_idx(idx)
+        cur = self.head.next
+        for i in range(0, idx):
+            if cur.next.val == None:
+                raise IndexError
+            cur = cur.next
+        return cur
+
     def __getitem__(self, idx):
         """Implements `x = self[idx]`"""
-        assert(isinstance(idx, int))
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        return self._getnode_(idx).val
 
     def __setitem__(self, idx, value):
         """Implements `self[idx] = x`"""
-        assert(isinstance(idx, int))
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        cur = self._getnode_(idx)
+        cur.val = value
 
     def __delitem__(self, idx):
         """Implements `del self[idx]`"""
-        assert(isinstance(idx, int))
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        cur = self._getnode_(idx)
+        cur.prior.next = cur.next
+        self.length -= 1
 
     ### cursor-based access ###
 
@@ -99,8 +106,13 @@ class LinkedList:
         returns `str(x)` for all values `x` in this list, separated by commas
         and enclosed by square brackets. E.g., for a list containing values
         1, 2 and 3, returns '[1, 2, 3]'."""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        string = ""
+        cur = self.head.next
+        for i in range(0, self.length):
+            string += str(cur.val) + ", "
+            cur = cur.next
+        string = string[0:-2]
+        return "[" + string + "]"
 
     def __repr__(self):
         """Supports REPL inspection. (Same behavior as `str`.)"""
@@ -182,8 +194,9 @@ class LinkedList:
 
     def clear(self):
         """Removes all elements from this list."""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        self.head.next = None
+        self.head.prior = None
+        self.length = 0
 
     def copy(self):
         """Returns a new LinkedList instance (with separate Nodes), that
