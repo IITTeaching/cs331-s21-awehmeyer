@@ -119,6 +119,8 @@ class LinkedList:
             self.cursor = self.head.next
             if self.head.next == self.head:
                 self.cursor = None
+        else:
+            self.cursor = self.cursor.next
         self.length -= 1
 
     ### stringification ###
@@ -403,7 +405,7 @@ def test_custor_based_access():
 
     lst1 = []
     lst2 = LinkedList()
-    for _ in range(500):
+    for _ in range(500): #change to 500 and 1000
         val = random.randrange(1000)
         lst1.append(val)
         lst2.append(val)
@@ -411,7 +413,7 @@ def test_custor_based_access():
     idx = 0
     lst2.cursor_set(0)
     for _ in range(100):
-        offset = random.randrange(-200, 200)
+        offset = random.randrange(-200, 200) #-200, 200
         idx = (idx + offset) % len(lst1)
         lst2.cursor_move(offset)
         del lst1[idx]
