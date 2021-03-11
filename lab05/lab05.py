@@ -70,13 +70,11 @@ class LinkedList:
     def cursor_get(self):
         """retrieves the value at the current cursor position"""
         assert self.cursor is not self.head
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        return self.cursor.val
 
     def cursor_set(self, idx):
         """sets the cursor to the node at the provided index"""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        self.cursor = self._getnode_(idx)
 
     def cursor_move(self, offset):
         """moves the cursor forward or backward by the provided offset
@@ -87,19 +85,41 @@ class LinkedList:
         assert len(self) > 0
         ### BEGIN SOLUTION
         ### END SOLUTION
+        if offset > 0:
+            for i in range(0, offset):
+                self.cursor = self.cursor.next
+                if self.cursor == self.head:
+                    self.cursor = self.cursor.next
+        else:
+            for i in range(0, abs(offset)):
+                self.cursor = self.cursor.prior
+                if self.cursor == self.head:
+                    self.cursor = self.cursor.prior
+
 
     def cursor_insert(self, value):
         """inserts a new value after the cursor and sets the cursor to the
         new node"""
         ### BEGIN SOLUTION
         ### END SOLUTION
+        n = LinkedList.Node(value, prior=self.cursor, next=self.cursor.next) #        n = LinkedList.Node(value, prior=cur.prior, next=cur)
+        self.cursor.next = n
+        self.cursor.next.prior = n
+        self.cursor = n
+        self.length += 1
 
+    ### work here
     def cursor_delete(self):
         """deletes the node the cursor refers to and sets the cursor to the
         following node"""
         assert self.cursor is not self.head and len(self) > 0
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        self.cursor.prior.next = self.cursor.next
+        self.cursor.next.prior = self.cursor.prior
+        if self.cursor == self.head:
+            self.cursor = self.head.next
+            if self.head.next == self.head:
+                self.cursor = None
+        self.length -= 1
 
     ### stringification ###
 
@@ -397,6 +417,8 @@ def test_custor_based_access():
         del lst1[idx]
         lst2.cursor_delete()
 
+    print(lst1)
+    print(lst2)
     assert len(lst1) == len(lst2)
     for i in range(len(lst1)):
         assert lst1[i] == lst2[i]
@@ -611,8 +633,8 @@ def test_reverse():
 def main():
     test_subscript_access()
     say_success()
-    #test_custor_based_access()
-    #say_success()
+    test_custor_based_access()
+    say_success()
     test_stringification()
     say_success()
     test_single_element_manipulation()
