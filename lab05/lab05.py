@@ -152,7 +152,10 @@ class LinkedList:
         """Inserts value at position idx, shifting the original elements down the
         list, as needed. Note that inserting a value at len(self) --- equivalent
         to appending the value --- is permitted. Raises IndexError if idx is invalid."""
-        cur = self._getnode_(idx)
+        if idx == len(self):
+            cur = self.head
+        else:
+            cur = self._getnode_(idx)
         n = LinkedList.Node(value, prior=cur.prior, next=cur)
         cur.prior.next = n
         cur.prior = n
@@ -163,6 +166,7 @@ class LinkedList:
         by default)."""
         cur = self._getnode_(idx)
         cur.prior.next = cur.next
+        cur.next.prior = cur.prior
         self.length -= 1
         return cur.val
 
@@ -171,13 +175,13 @@ class LinkedList:
         list. Raises a ValueError if value is not found in the list."""
         cur = self.head.next
         for i in range(0, self.length):
-            if cur.next.val == None:
-                raise ValueError
-            elif cur.val == value:
+            if cur.val == value:
                 cur.prior.next = cur.next
                 cur.next.prior = cur.prior
                 self.length -= 1
                 return
+            cur = cur.next
+        raise ValueError(f"No such value {value} found!")
 
     ### predicates (T/F queries) ###
 
@@ -420,8 +424,6 @@ def test_custor_based_access():
         del lst1[idx]
         lst2.cursor_delete()
 
-    print(lst1)
-    print(lst2)
     assert len(lst1) == len(lst2)
     for i in range(len(lst1)):
         assert lst1[i] == lst2[i]
