@@ -423,9 +423,13 @@ def test_custor_based_access():
     assert len(lst1) == len(lst2)
     for i in range(len(lst1)):
         if lst1[i] != lst2[i]:
-            print("Found ghost error")
+            """print("Found ghost error")
+            print(lst1[i])
+            print(lst2[i])
+            print("#############")
+            print(lst1)
+            print(lst2)"""
         assert lst1[i] == lst2[i]
-
 
 ################################################################################
 # (11 points) test stringification
