@@ -85,8 +85,6 @@ class LinkedList:
         cursor will just "wrap around" the list, skipping over the sentinel
         node as needed"""
         assert len(self) > 0
-        ### BEGIN SOLUTION
-        ### END SOLUTION
         if offset > 0:
             for i in range(0, offset):
                 self.cursor = self.cursor.next
@@ -102,8 +100,6 @@ class LinkedList:
     def cursor_insert(self, value):
         """inserts a new value after the cursor and sets the cursor to the
         new node"""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
         n = LinkedList.Node(value, prior=self.cursor, next=self.cursor.next) #        n = LinkedList.Node(value, prior=cur.prior, next=cur)
         self.cursor.next = n
         self.cursor.next.prior = n
@@ -426,8 +422,9 @@ def test_custor_based_access():
 
     assert len(lst1) == len(lst2)
     for i in range(len(lst1)):
+        if lst1[i] != lst2[i]:
+            print("Found ghost error")
         assert lst1[i] == lst2[i]
-        print(i)
 
 
 ################################################################################
