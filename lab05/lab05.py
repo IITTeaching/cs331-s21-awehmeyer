@@ -51,7 +51,8 @@ class LinkedList:
 
     def __getitem__(self, idx):
         """Implements `x = self[idx]`"""
-        return self._getnode_(idx).val
+        if self.length == 0: raise IndexError
+        else: return self._getnode_(idx).val
 
     def __setitem__(self, idx, value):
         """Implements `self[idx] = x`"""
@@ -116,12 +117,7 @@ class LinkedList:
         assert self.cursor is not self.head and len(self) > 0
         self.cursor.prior.next = self.cursor.next
         self.cursor.next.prior = self.cursor.prior
-        if self.cursor == self.head:
-            self.cursor = self.head.next
-            if self.head.next == self.head:
-                self.cursor = None
-        else:
-            self.cursor = self.cursor.next
+        self.cursor = self.cursor.next
         self.length -= 1
 
     ### stringification ###
@@ -190,9 +186,9 @@ class LinkedList:
         other. If other is not an LinkedList, returns False."""
         if len(self) == len(other):
             cur1 = self.head.next
-            cur2 = self.head.next
+            cur2 = other.head.next
             for i in range(0, self.length):
-                if cur1.val != cur2:
+                if cur1.val != cur2.val:
                     return False
                 else:
                     cur1 = cur1.next
@@ -204,10 +200,9 @@ class LinkedList:
         """Implements `val in self`. Returns true if value is found in this list."""
         cur = self.head.next
         for i in range(0, self.length):
-            if cur.next.val == None:
-                raise ValueError
-            elif cur.val == value:
+            if cur.val == value:
                 return True
+            cur = cur.next
         return False
 
     ### queries ###
@@ -220,20 +215,20 @@ class LinkedList:
         """Returns the minimum value in this list."""
         cur = self.head.next
         curmin = cur.val
-        for i in range(0, self.length):
+        for i in range(0, self.length-1):
             cur = cur.next
-            if cur.value < curmin:
-                curmin = cur.value
+            if cur.val < curmin:
+                curmin = cur.val
         return curmin
 
     def max(self):
         """Returns the maximum value in this list."""
         cur = self.head.next
         curmax = cur.val
-        for i in range(0, self.length):
+        for i in range(0, self.length-1):
             cur = cur.next
-            if cur.value > curmax:
-                curmax = cur.value
+            if cur.val > curmax:
+                curmax = cur.val
         return curmax
 
     def index(self, value, i=0, j=None):
@@ -243,7 +238,7 @@ class LinkedList:
         is not in the list, raise a ValueError."""
         if not j: end = self.length
         else: end = self._normalize_idx(j)
-        cur = self.head.next
+        cur = self._getnode_(i)
         for idx in range(i, end):
             if cur.val == value:
                 return idx
@@ -261,30 +256,37 @@ class LinkedList:
 
     ### bulk operations ###
 
-    def __add__(self, other): ### does this work?
+    def __add__(self, other): ### should this be O(1)
         """Implements `self + other_list`. Returns a new LinkedList
         instance that contains the values in this list followed by those
         of other."""
         assert(isinstance(other, LinkedList))
-        self.head.prior.next = other.head.next
-        other.head.next.prior = self.head.prior
+        lst3 = self.copy()
+        cur = other.head.next
+        for i in range(0, len(other)):
+            lst3.append(cur.val)
+            cur = cur.next
+        return lst3
 
-    def clear(self):
+    def clear(self): ### different???
         """Removes all elements from this list."""
-        self.head.next = None
-        self.head.prior = None
+        self.head.next = self.head.prior = self.head
         self.length = 0
 
     def copy(self):
         """Returns a new LinkedList instance (with separate Nodes), that
         contains the same values as this list."""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        copy = LinkedList()
+        cur = self.head.next
+        for i in range(0, self.length):
+            copy.append(cur.val)
+            cur = cur.next
+        return copy
 
     def extend(self, other):
         """Adds all elements, in order, from other --- an Iterable --- to this list."""
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        for i in other:
+            self.append(i)
 
     ### iteration ###
     def __iter__(self):
@@ -296,13 +298,11 @@ class LinkedList:
 
     ### reverse ###
     def reverse(self):
-        """Return a copy of the list with all elements in reverse order.
-
-        E.g., for [1,2,3] you shoudl return [3,2,1].
-        """
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-
+        """Return a copy of the list with all elements in reverse order."""
+        rev = LinkedList()
+        for i in self:
+            rev.prepend(i)
+        return rev
 
 ################################################################################
 # TEST CASES
@@ -427,6 +427,7 @@ def test_custor_based_access():
     assert len(lst1) == len(lst2)
     for i in range(len(lst1)):
         assert lst1[i] == lst2[i]
+        print(i)
 
 
 ################################################################################
@@ -496,7 +497,6 @@ def test_predicates():
 
     lst2.append(100)
     tc.assertNotEqual(lst, lst2)
-
     lst.append(100)
     tc.assertEqual(lst, lst2)
 
