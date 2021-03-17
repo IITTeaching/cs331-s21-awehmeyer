@@ -167,19 +167,23 @@ class Queue:
     def enqueue(self, val):
         ### BEGIN SOLUTION
         ### END SOLUTION
+        pass
 
     def dequeue(self):
         ### BEGIN SOLUTION
         ### END SOLUTION
+        pass
 
     def resize(self, newsize):
         assert(len(self.data) < newsize)
         ### BEGIN SOLUTION
         ### END SOLUTION
+        pass
 
     def empty(self):
         ### BEGIN SOLUTION
         ### END SOLUTION
+        pass
 
     def __bool__(self):
         return not self.empty()
