@@ -293,6 +293,10 @@ class LinkedList:
         for i in range(0, self.length):
             yield cur.val
             cur = cur.next
+        #cur = self.head.prior
+        #for i in range(0, self.length):
+        #    yield cur.val
+        #    cur = cur.prior
 
     ### reverse ###
     def reverse(self):
@@ -301,6 +305,13 @@ class LinkedList:
         for i in self:
             rev.prepend(i)
         return rev
+
+    #def pickevery(self, n):
+    #    cur = self.head.next
+    #    for i in range(0, self.length, n):
+    #        print(cur.val)
+    #        for j in range(0, n):
+    #            cur = cur.next
 
 ################################################################################
 # TEST CASES
