@@ -50,8 +50,19 @@ def check_delimiters(expr):
     delim_openers = '{([<'
     delim_closers = '})]>'
 
-    ### BEGIN SOLUTION
-    ### END SOLUTION
+    stack = Stack()
+    for c in expr:
+        if c in delim_openers:
+            stack.push(c)
+        elif c in delim_closers:
+            if stack.empty():
+                return False
+            cur = stack.pop()
+            if not cur:
+                return False
+            if delim_openers.index(cur) != delim_closers.index(c):
+                return False
+    return stack.empty()
 
 ################################################################################
 # CHECK DELIMITERS - TEST CASES
@@ -115,13 +126,38 @@ def test_check_delimiters_6():
 def infix_to_postfix(expr):
     """Returns the postfix form of the infix expression found in `expr`"""
     # you may find the following precedence dictionary useful
-    prec = {'*': 2, '/': 2,
-            '+': 1, '-': 1}
-    ops = Stack()
+    prec = {'*': 2, 
+            '/': 2,
+            '+': 1,
+            '-': 1}
+    stack = Stack()
     postfix = []
     toks = expr.split()
-    ### BEGIN SOLUTION
-    ### END SOLUTION
+
+    for token in toks:
+        if token.isdigit():
+            postfix.append(token)
+        else:
+            if stack.empty() or stack.peek() == "(":
+                stack.push(token)
+            elif token == "(":
+                stack.push(token)
+            elif token == ")":
+                while not stack.empty():
+                    cur = stack.pop()
+                    if cur == "(":
+                        break
+                    postfix.append(cur)
+            elif prec[token] > prec[stack.peek()]:
+                stack.push(token)
+            elif prec[token] == prec[stack.peek()]:
+                postfix.append(stack.pop)
+                stack.push(token)
+            elif prec[token] < prec[stack.peek()]:
+                postfix.append(stack.pop)
+    while not stack.empty():
+        postfix.append(stack.pop())
+        
     return ' '.join(postfix)
 
 ################################################################################
@@ -199,12 +235,13 @@ class Queue:
     def __iter__(self):
         ### BEGIN SOLUTION
         ### END SOLUTION
+        pass
 
 ################################################################################
 # QUEUE IMPLEMENTATION - TEST CASES
 ################################################################################
 
-# points: 13
+### points: 13 ###
 def test_queue_implementation_1():
     tc = TestCase()
 

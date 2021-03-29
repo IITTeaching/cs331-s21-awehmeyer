@@ -15,18 +15,22 @@ class ExtensibleHashTable:
     def find_bucket(self, key):
         # BEGIN_SOLUTION
         # END_SOLUTION
+        pass
 
     def __getitem__(self,  key):
         # BEGIN_SOLUTION
         # END_SOLUTION
+        pass
 
     def __setitem__(self, key, value):
         # BEGIN_SOLUTION
         # END_SOLUTION
+        pass
 
     def __delitem__(self, key):
         # BEGIN SOLUTION
         # END SOLUTION
+        pass
 
     def __contains__(self, key):
         try:
@@ -44,6 +48,7 @@ class ExtensibleHashTable:
     def __iter__(self):
         ### BEGIN SOLUTION
         ### END SOLUTION
+        pass
 
     def keys(self):
         return iter(self)
@@ -51,10 +56,12 @@ class ExtensibleHashTable:
     def values(self):
         ### BEGIN SOLUTION
         ### END SOLUTION
+        pass
 
     def items(self):
         ### BEGIN SOLUTION
         ### END SOLUTION
+        pass
 
     def __str__(self):
         return '{ ' + ', '.join(str(k) + ': ' + str(v) for k, v in self.items()) + ' }'
