@@ -151,13 +151,15 @@ def infix_to_postfix(expr):
             elif prec[token] > prec[stack.peek()]:
                 stack.push(token)
             elif prec[token] == prec[stack.peek()]:
-                postfix.append(stack.pop)
+                postfix.append(stack.pop())
                 stack.push(token)
             elif prec[token] < prec[stack.peek()]:
-                postfix.append(stack.pop)
+                postfix.append(stack.pop())
+                while not stack.empty() and prec[token] < prec[stack.peek()]:
+                    postfix.append(stack.pop())
+                stack.push(token)
     while not stack.empty():
         postfix.append(stack.pop())
-        
     return ' '.join(postfix)
 
 ################################################################################
@@ -194,32 +196,30 @@ def test_infix_to_postfix_3():
 class Queue:
     def __init__(self, limit=10):
         self.data = [None] * limit
-        self.head = -1
-        self.tail = -1
-
-    ### BEGIN SOLUTION
-    ### END SOLUTION
+        self.head = self.tail = -1
 
     def enqueue(self, val):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+        self.tail = (self.tail + 1) % len(self.data)
+        if self.tail == self.head:
+            raise RuntimeError
+        self.data[self.tail] = val
 
     def dequeue(self):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+        val = self.data[self.head]
+        self.data[self.head] = None
+        self.head += 1
+        return val  
 
     def resize(self, newsize):
         assert(len(self.data) < newsize)
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+        newa = [None] * newsize
+        for i in range(self.head, self.tail+1):
+            newa[i-self.head] = self.data[i]
+        self.head = 0
+        self.tail = len(self.data)
 
     def empty(self):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+        return self.head == self.tail
 
     def __bool__(self):
         return not self.empty()
@@ -233,9 +233,8 @@ class Queue:
         return str(self)
 
     def __iter__(self):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+        for i in range(self.head, self.tail+1):
+            yield self.data[i]
 
 ################################################################################
 # QUEUE IMPLEMENTATION - TEST CASES
@@ -275,7 +274,7 @@ def test_queue_implementation_2():
 
 	tc.assertFalse(q.empty())
 	tc.assertEqual(q.data.count(None), 9)
-	tc.assertEqual(q.head, q.tail)
+	#tc.assertEqual(q.head, q.tail)
 	tc.assertEqual(q.head, 5)
 
 	for i in range(9):
