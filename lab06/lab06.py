@@ -228,9 +228,13 @@ class Queue:
     def resize(self, newsize): ### TEST
         assert(len(self.data) < newsize)
         newa = [None] * newsize
+
         for i in range(0, self.size):
-            newa[i] = self.data[i]
+            newa[i] = self.dequeue()
+        
         self.data = newa
+        self.head = 0
+        self.tail = self.size-1
         self.size = newsize
 
     def empty(self):
