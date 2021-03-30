@@ -195,31 +195,46 @@ def test_infix_to_postfix_3():
 ################################################################################
 class Queue:
     def __init__(self, limit=10):
-        self.data = [None] * limit
+        self.size = limit
+        self.data = [None] * self.size
         self.head = self.tail = -1
 
     def enqueue(self, val):
-        self.tail = (self.tail + 1) % len(self.data)
-        if self.tail == self.head:
+        if (self.tail + 1) % self.size == self.head:
             raise RuntimeError
-        self.data[self.tail] = val
+        elif self.head == -1:
+            self.head = 0
+            self.tail = 0
+            self.data[self.tail] = val
+        else:
+            self.tail = (self.tail + 1) % self.size
+            self.data[self.tail] = val
 
     def dequeue(self):
-        val = self.data[self.head]
-        self.data[self.head] = None
-        self.head += 1
-        return val  
+        if self.head == -1:
+            raise RuntimeError
+        elif self.head == self.tail:
+            cur = self.data[self.head]
+            self.data[self.head] = None
+            self.head = -1
+            self.tail = -1
+            return cur
+        else:
+            cur = self.data[self.head]
+            self.data[self.head] = None
+            self.head = (self.head + 1) % self.size
+            return cur
 
-    def resize(self, newsize):
+    def resize(self, newsize): ### TEST
         assert(len(self.data) < newsize)
         newa = [None] * newsize
-        for i in range(self.head, self.tail+1):
-            newa[i-self.head] = self.data[i]
-        self.head = 0
-        self.tail = len(self.data)
+        for i in range(0, self.size):
+            newa[i] = self.data[i]
+        self.data = newa
+        self.size = newsize
 
     def empty(self):
-        return self.head == self.tail
+        return self.head == -1
 
     def __bool__(self):
         return not self.empty()
@@ -274,7 +289,7 @@ def test_queue_implementation_2():
 
 	tc.assertFalse(q.empty())
 	tc.assertEqual(q.data.count(None), 9)
-	#tc.assertEqual(q.head, q.tail)
+	tc.assertEqual(q.head, q.tail)
 	tc.assertEqual(q.head, 5)
 
 	for i in range(9):
