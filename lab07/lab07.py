@@ -16,9 +16,10 @@ class ExtensibleHashTable: ###should these be kv pairs???
         olddata = self.buckets
         newdata = [None] * 2 * self.n_buckets
         self.buckets = newdata
+        self.n_buckets *= 2
+        self.nitems = 0
         for el in olddata:
             self.__setitem__(el[0], el[1])
-        self.n_buckets *= 2
 
     def find_bucket(self, key): ### return the index of the bucket
         h = hash(key) % self.n_buckets
