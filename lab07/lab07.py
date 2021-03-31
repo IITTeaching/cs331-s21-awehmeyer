@@ -13,7 +13,12 @@ class ExtensibleHashTable: ###should these be kv pairs???
         self.nitems = 0
 
     def expand(self):
-        pass
+        newdata = [None] * 2 * self.n_buckets
+        for el in self.buckets:
+            hnew = hash(el[0]) % (self.n_buckets * 2)
+            newdata[hnew] = el[1]
+        self.n_buckets *= 2
+        self.buckets = newdata
 
     def find_bucket(self, key):
         h = hash(key) % self.n_buckets
@@ -25,7 +30,7 @@ class ExtensibleHashTable: ###should these be kv pairs???
                 return self.buckets[i]
         raise KeyError
 
-    def __getitem__(self,  key):
+    def __getitem__(self, key):
         return self.find_bucket(key)[1]
 
     def __setitem__(self, key, value):
@@ -38,6 +43,11 @@ class ExtensibleHashTable: ###should these be kv pairs???
                     self.buckets[i] = (key, value)
                     self.nitems += 1
                     break
+            for i in range(0, h):
+                if not self.buckets[i]:
+                    self.buckets[i] = (key, value)
+                    self.nitems += 1
+                    break        
         else:
             self.buckets[h] = (key, value)
             self.nitems += 1
@@ -76,7 +86,7 @@ class ExtensibleHashTable: ###should these be kv pairs???
     def items(self):
         for i in range(0, self.n_buckets):
             if self.buckets[i]:
-                yield self.bucket[i]
+                yield self.buckets[i]
 
     def __str__(self):
         return '{ ' + ', '.join(str(k) + ': ' + str(v) for k, v in self.items()) + ' }'
