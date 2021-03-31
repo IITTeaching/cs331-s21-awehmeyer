@@ -39,16 +39,17 @@ class ExtensibleHashTable: ###should these be kv pairs???
             self.expand()
         h = hash(key) % self.n_buckets
         if self.buckets[h]:
+            print(self.buckets[h])
             for i in range(h, self.n_buckets):
                 if not self.buckets[i]:
                     self.buckets[i] = (key, value)
                     self.nitems += 1
-                    break
+                    return
             for i in range(0, h):
                 if not self.buckets[i]:
                     self.buckets[i] = (key, value)
                     self.nitems += 1
-                    break        
+                    return       
         else:
             self.buckets[h] = (key, value)
             self.nitems += 1
