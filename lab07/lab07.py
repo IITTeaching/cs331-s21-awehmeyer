@@ -14,31 +14,30 @@ class ExtensibleHashTable: ###should these be kv pairs???
 
     def find_bucket(self, key):
         h = hash(key) % self.n_buckets
-        if h > self.n_buckets: 
-            raise KeyError
-        else: ### Look for it circularly starting at h moving right
-            for i in range(h, self.n_buckets):
-                if self.buckets[i][0] == key:
-                    return self.buckets[i]
-            for i in range(0, h):
-                if self.buckets[i][0] == key:
-                    return self.buckets[i]
-            raise KeyError
+        for i in range(h, self.n_buckets):
+            if self.buckets[i][0] == key:
+                return self.buckets[i]
+        for i in range(0, h):
+            if self.buckets[i][0] == key:
+                return self.buckets[i]
+        raise KeyError
 
     def __getitem__(self,  key):
         return self.find_bucket(key)[1]
 
     def __setitem__(self, key, value):
-        h = hash(key) % self.n_buckets
-        if self.buckets[h]:
-            for i in range(h, self.n_buckets):
-                if not self.buckets[i]:
-                    self.buckets[i] = value
-                    self.nitems += 1
-                    break
-        else:
-            self.buckets[h] = value
-            self.nitems += 1
+        
+        
+        # h = hash(key) % self.n_buckets
+        # if self.buckets[h]:
+        #     for i in range(h, self.n_buckets):
+        #         if not self.buckets[i]:
+        #             self.buckets[i] = value
+        #             self.nitems += 1
+        #             break
+        # else:
+        #     self.buckets[h] = value
+        #     self.nitems += 1
 
     def __delitem__(self, key):
         h = hash(key) % self.n_buckets
