@@ -12,6 +12,9 @@ class ExtensibleHashTable: ###should these be kv pairs???
         self.buckets = [None] * n_buckets
         self.nitems = 0
 
+    def expand(self):
+        pass
+
     def find_bucket(self, key):
         h = hash(key) % self.n_buckets
         for i in range(h, self.n_buckets):
@@ -26,24 +29,23 @@ class ExtensibleHashTable: ###should these be kv pairs???
         return self.find_bucket(key)[1]
 
     def __setitem__(self, key, value):
-        
-        
-        # h = hash(key) % self.n_buckets
-        # if self.buckets[h]:
-        #     for i in range(h, self.n_buckets):
-        #         if not self.buckets[i]:
-        #             self.buckets[i] = value
-        #             self.nitems += 1
-        #             break
-        # else:
-        #     self.buckets[h] = value
-        #     self.nitems += 1
+        if self.nitems / self.n_buckets > self.fillfactor:
+            self.expand()
+        h = hash(key) % self.n_buckets
+        if self.buckets[h]:
+            for i in range(h, self.n_buckets):
+                if not self.buckets[i]:
+                    self.buckets[i] = (key, value)
+                    self.nitems += 1
+                    break
+        else:
+            self.buckets[h] = (key, value)
+            self.nitems += 1
 
     def __delitem__(self, key):
-        h = hash(key) % self.n_buckets
-        if self.buckets[h] and self.buckets[h][0] == key:
-            self.buckets[h] = None
-            self.nitems -= 1
+        cur = self.find_bucket(key)
+        cur = None
+        self.nitems -= 1
 
     def __contains__(self, key):
         try:
@@ -67,14 +69,14 @@ class ExtensibleHashTable: ###should these be kv pairs???
         return iter(self)
 
     def values(self):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+        for i in range(0, self.n_buckets):
+            if self.buckets[i]:
+                yield self.bucket[i][1]
 
     def items(self):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+        for i in range(0, self.n_buckets):
+            if self.buckets[i]:
+                yield self.bucket[i]
 
     def __str__(self):
         return '{ ' + ', '.join(str(k) + ': ' + str(v) for k, v in self.items()) + ' }'
