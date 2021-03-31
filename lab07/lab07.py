@@ -4,7 +4,7 @@ from unittest import TestCase
 ################################################################################
 # EXTENSIBLE HASHTABLE
 ################################################################################
-class ExtensibleHashTable:
+class ExtensibleHashTable: ###should these be kv pairs???
 
     def __init__(self, n_buckets=1000, fillfactor=0.5):
         self.n_buckets = n_buckets
@@ -13,24 +13,38 @@ class ExtensibleHashTable:
         self.nitems = 0
 
     def find_bucket(self, key):
-        # BEGIN_SOLUTION
-        # END_SOLUTION
-        pass
+        h = hash(key) % self.n_buckets
+        if h > self.n_buckets: 
+            raise KeyError
+        else: ### Look for it circularly starting at h moving right
+            for i in range(h, self.n_buckets):
+                if self.buckets[i][0] == key:
+                    return self.buckets[i]
+            for i in range(0, h):
+                if self.buckets[i][0] == key:
+                    return self.buckets[i]
+            raise KeyError
 
     def __getitem__(self,  key):
-        # BEGIN_SOLUTION
-        # END_SOLUTION
-        pass
+        return self.find_bucket(key)[1]
 
     def __setitem__(self, key, value):
-        # BEGIN_SOLUTION
-        # END_SOLUTION
-        pass
+        h = hash(key) % self.n_buckets
+        if self.buckets[h]:
+            for i in range(h, self.n_buckets):
+                if not self.buckets[i]:
+                    self.buckets[i] = value
+                    self.nitems += 1
+                    break
+        else:
+            self.buckets[h] = value
+            self.nitems += 1
 
     def __delitem__(self, key):
-        # BEGIN SOLUTION
-        # END SOLUTION
-        pass
+        h = hash(key) % self.n_buckets
+        if self.buckets[h] and self.buckets[h][0] == key:
+            self.buckets[h] = None
+            self.nitems -= 1
 
     def __contains__(self, key):
         try:
@@ -46,9 +60,9 @@ class ExtensibleHashTable:
         return self.__len__() != 0
 
     def __iter__(self):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+        for i in range(0, self.n_buckets):
+            if self.buckets[i]:
+                yield self.buckets[i]
 
     def keys(self):
         return iter(self)
