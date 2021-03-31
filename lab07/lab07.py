@@ -19,40 +19,35 @@ class ExtensibleHashTable: ###should these be kv pairs???
         self.n_buckets *= 2
         self.nitems = 0
         for el in olddata:
-            self.__setitem__(el[0], el[1])
+            if el: 
+                self.__setitem__(el[0], el[1])
 
-    def find_bucket(self, key): ### return the index of the bucket
+    ### RETURN INDEX OF GIVEN KEY ###
+    def find_bucket(self, key):
         h = hash(key) % self.n_buckets
         for i in range(h, self.n_buckets):
-            if self.buckets[i][0] == key:
+            if self.buckets[i] and self.buckets[i][0] == key:
                 return i
         for i in range(0, h):
-            if self.buckets[i][0] == key:
+            if self.buckets[i] and self.buckets[i][0] == key:
                 return i
         raise KeyError
 
     def __getitem__(self, key):
-        return self.buckets[self.find_bucket(key)][1]
+        index = self.find_bucket(key)
+        return self.buckets[index][1]
 
     def __setitem__(self, key, value):
         if self.nitems / self.n_buckets > self.fillfactor:
             self.expand()
+        
         h = hash(key) % self.n_buckets
-        if self.buckets[h]:
-            print(self.buckets[h])
-            for i in range(h, self.n_buckets):
-                if not self.buckets[i]:
-                    self.buckets[i] = (key, value)
-                    self.nitems += 1
-                    return
-            for i in range(0, h):
-                if not self.buckets[i]:
-                    self.buckets[i] = (key, value)
-                    self.nitems += 1
-                    return       
-        else:
-            self.buckets[h] = (key, value)
-            self.nitems += 1
+        while self.buckets[h] and self.buckets[h][0]:
+            if self.buckets[h][0] == key: break
+            h += 1
+            if h == self.n_buckets: h = 0
+        self.nitems += 1
+        self.buckets[h] = (key, value)
 
     def __delitem__(self, key):
         index = self.find_bucket(key)
@@ -75,7 +70,7 @@ class ExtensibleHashTable: ###should these be kv pairs???
     def __iter__(self):
         for i in range(0, self.n_buckets):
             if self.buckets[i]:
-                yield self.buckets[i]
+                yield self.buckets[i][0]
 
     def keys(self):
         return iter(self)
@@ -83,7 +78,7 @@ class ExtensibleHashTable: ###should these be kv pairs???
     def values(self):
         for i in range(0, self.n_buckets):
             if self.buckets[i]:
-                yield self.bucket[i][1]
+                yield self.buckets[i][1]
 
     def items(self):
         for i in range(0, self.n_buckets):
@@ -117,8 +112,6 @@ def test_insert():
 
     for i in range(1000):
         k = random.randint(0,1000000)
-        if i == 28:
-            print("found")
         h[k] = "testing"
         tc.assertEqual(h[k], "testing")
 
@@ -132,7 +125,6 @@ def test_getitem():
 
     with tc.assertRaises(KeyError):
         h[200]
-
 
 # points: 10
 def test_iteration():
