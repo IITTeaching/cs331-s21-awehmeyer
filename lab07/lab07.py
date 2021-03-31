@@ -13,25 +13,25 @@ class ExtensibleHashTable: ###should these be kv pairs???
         self.nitems = 0
 
     def expand(self):
+        olddata = self.buckets
         newdata = [None] * 2 * self.n_buckets
-        for el in self.buckets:
-            hnew = hash(el[0]) % (self.n_buckets * 2)
-            newdata[hnew] = el[1]
-        self.n_buckets *= 2
         self.buckets = newdata
+        for el in olddata:
+            self.__setitem__(el[0], el[1])
+        self.n_buckets *= 2
 
-    def find_bucket(self, key):
+    def find_bucket(self, key): ### return the index of the bucket
         h = hash(key) % self.n_buckets
         for i in range(h, self.n_buckets):
             if self.buckets[i][0] == key:
-                return self.buckets[i]
+                return i
         for i in range(0, h):
             if self.buckets[i][0] == key:
-                return self.buckets[i]
+                return i
         raise KeyError
 
     def __getitem__(self, key):
-        return self.find_bucket(key)[1]
+        return self.buckets[self.find_bucket(key)][1]
 
     def __setitem__(self, key, value):
         if self.nitems / self.n_buckets > self.fillfactor:
@@ -53,8 +53,8 @@ class ExtensibleHashTable: ###should these be kv pairs???
             self.nitems += 1
 
     def __delitem__(self, key):
-        cur = self.find_bucket(key)
-        cur = None
+        index = self.find_bucket(key)
+        self.buckets[index] = (None, None) ##special item telling you something was there
         self.nitems -= 1
 
     def __contains__(self, key):
@@ -115,6 +115,8 @@ def test_insert():
 
     for i in range(1000):
         k = random.randint(0,1000000)
+        if i == 28:
+            print("found")
         h[k] = "testing"
         tc.assertEqual(h[k], "testing")
 
