@@ -4,7 +4,7 @@ from unittest import TestCase
 ################################################################################
 # EXTENSIBLE HASHTABLE
 ################################################################################
-class ExtensibleHashTable:
+class ExtensibleHashTable: ###should these be kv pairs???
 
     def __init__(self, n_buckets=1000, fillfactor=0.5):
         self.n_buckets = n_buckets
@@ -12,21 +12,47 @@ class ExtensibleHashTable:
         self.buckets = [None] * n_buckets
         self.nitems = 0
 
-    def find_bucket(self, key):
-        # BEGIN_SOLUTION
-        # END_SOLUTION
+    def expand(self):
+        olddata = self.buckets
+        newdata = [None] * 2 * self.n_buckets
+        self.buckets = newdata
+        self.n_buckets *= 2
+        self.nitems = 0
+        for el in olddata:
+            if el: 
+                self.__setitem__(el[0], el[1])
 
-    def __getitem__(self,  key):
-        # BEGIN_SOLUTION
-        # END_SOLUTION
+    ### RETURN INDEX OF GIVEN KEY ###
+    def find_bucket(self, key):
+        h = hash(key) % self.n_buckets
+        for i in range(h, self.n_buckets):
+            if self.buckets[i] and self.buckets[i][0] == key:
+                return i
+        for i in range(0, h):
+            if self.buckets[i] and self.buckets[i][0] == key:
+                return i
+        raise KeyError
+
+    def __getitem__(self, key):
+        index = self.find_bucket(key)
+        return self.buckets[index][1]
 
     def __setitem__(self, key, value):
-        # BEGIN_SOLUTION
-        # END_SOLUTION
+        if self.nitems / self.n_buckets > self.fillfactor:
+            self.expand()
+        
+        h = hash(key) % self.n_buckets
+        while self.buckets[h] and self.buckets[h][0]:
+            if self.buckets[h][0] == key: break
+            h += 1
+            if h == self.n_buckets: h = 0
+        self.nitems += 1
+        self.buckets[h] = (key, value)
 
     def __delitem__(self, key):
-        # BEGIN SOLUTION
-        # END SOLUTION
+        index = self.find_bucket(key)
+        self.buckets[index] = (None, None) ##special item telling you something was there
+        self.nitems -= 1
 
     def __contains__(self, key):
         try:
@@ -42,19 +68,22 @@ class ExtensibleHashTable:
         return self.__len__() != 0
 
     def __iter__(self):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        for i in range(0, self.n_buckets):
+            if self.buckets[i]:
+                yield self.buckets[i][0]
 
     def keys(self):
         return iter(self)
 
     def values(self):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        for i in range(0, self.n_buckets):
+            if self.buckets[i]:
+                yield self.buckets[i][1]
 
     def items(self):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        for i in range(0, self.n_buckets):
+            if self.buckets[i]:
+                yield self.buckets[i]
 
     def __str__(self):
         return '{ ' + ', '.join(str(k) + ': ' + str(v) for k, v in self.items()) + ' }'
@@ -96,7 +125,6 @@ def test_getitem():
 
     with tc.assertRaises(KeyError):
         h[200]
-
 
 # points: 10
 def test_iteration():

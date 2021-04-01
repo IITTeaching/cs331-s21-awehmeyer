@@ -50,8 +50,19 @@ def check_delimiters(expr):
     delim_openers = '{([<'
     delim_closers = '})]>'
 
-    ### BEGIN SOLUTION
-    ### END SOLUTION
+    stack = Stack()
+    for c in expr:
+        if c in delim_openers:
+            stack.push(c)
+        elif c in delim_closers:
+            if stack.empty():
+                return False
+            cur = stack.pop()
+            if not cur:
+                return False
+            if delim_openers.index(cur) != delim_closers.index(c):
+                return False
+    return stack.empty()
 
 ################################################################################
 # CHECK DELIMITERS - TEST CASES
@@ -115,13 +126,40 @@ def test_check_delimiters_6():
 def infix_to_postfix(expr):
     """Returns the postfix form of the infix expression found in `expr`"""
     # you may find the following precedence dictionary useful
-    prec = {'*': 2, '/': 2,
-            '+': 1, '-': 1}
-    ops = Stack()
+    prec = {'*': 2, 
+            '/': 2,
+            '+': 1,
+            '-': 1}
+    stack = Stack()
     postfix = []
     toks = expr.split()
-    ### BEGIN SOLUTION
-    ### END SOLUTION
+
+    for token in toks:
+        if token.isdigit():
+            postfix.append(token)
+        else:
+            if stack.empty() or stack.peek() == "(":
+                stack.push(token)
+            elif token == "(":
+                stack.push(token)
+            elif token == ")":
+                while not stack.empty():
+                    cur = stack.pop()
+                    if cur == "(":
+                        break
+                    postfix.append(cur)
+            elif prec[token] > prec[stack.peek()]:
+                stack.push(token)
+            elif prec[token] == prec[stack.peek()]:
+                postfix.append(stack.pop())
+                stack.push(token)
+            elif prec[token] < prec[stack.peek()]:
+                postfix.append(stack.pop())
+                while not stack.empty() and prec[token] < prec[stack.peek()]:
+                    postfix.append(stack.pop())
+                stack.push(token)
+    while not stack.empty():
+        postfix.append(stack.pop())
     return ' '.join(postfix)
 
 ################################################################################
@@ -157,33 +195,50 @@ def test_infix_to_postfix_3():
 ################################################################################
 class Queue:
     def __init__(self, limit=10):
-        self.data = [None] * limit
-        self.head = -1
-        self.tail = -1
-
-    ### BEGIN SOLUTION
-    ### END SOLUTION
+        self.size = limit
+        self.data = [None] * self.size
+        self.head = self.tail = -1
 
     def enqueue(self, val):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+        if (self.tail + 1) % self.size == self.head:
+            raise RuntimeError
+        elif self.head == -1:
+            self.head = 0
+            self.tail = 0
+            self.data[self.tail] = val
+        else:
+            self.tail = (self.tail + 1) % self.size
+            self.data[self.tail] = val
 
     def dequeue(self):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+        if self.head == -1:
+            raise RuntimeError
+        elif self.head == self.tail:
+            cur = self.data[self.head]
+            self.data[self.head] = None
+            self.head = -1
+            self.tail = -1
+            return cur
+        else:
+            cur = self.data[self.head]
+            self.data[self.head] = None
+            self.head = (self.head + 1) % self.size
+            return cur
 
-    def resize(self, newsize):
+    def resize(self, newsize): ### TEST
         assert(len(self.data) < newsize)
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+        newa = [None] * newsize
+
+        for i in range(0, self.size):
+            newa[i] = self.dequeue()
+        
+        self.data = newa
+        self.head = 0
+        self.tail = self.size-1
+        self.size = newsize
 
     def empty(self):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+        return self.head == -1
 
     def __bool__(self):
         return not self.empty()
@@ -197,14 +252,14 @@ class Queue:
         return str(self)
 
     def __iter__(self):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
+        for i in range(self.head, self.tail+1):
+            yield self.data[i]
 
 ################################################################################
 # QUEUE IMPLEMENTATION - TEST CASES
 ################################################################################
 
-# points: 13
+### points: 13 ###
 def test_queue_implementation_1():
     tc = TestCase()
 
