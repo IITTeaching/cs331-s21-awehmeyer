@@ -1,12 +1,8 @@
-def h(i):
-    t = i
-    result = []
-    for j in range(2,t+1):
-        if j > t:
-                break
-        while (t % j) == 0:
-            t = t // j
-            result.append(j)
-    print(result)
-
-h(128)
+def pickevery(l,n):
+    a = []
+    cur = self.head.next
+    for i in range(0, self.length, n):
+        a.append(cur.val)
+        for j in range(0, n):
+            cur = cur.next
+    return a
