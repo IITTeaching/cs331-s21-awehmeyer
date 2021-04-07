@@ -306,12 +306,14 @@ class LinkedList:
             rev.prepend(i)
         return rev
 
-    #def pickevery(self, n):
-    #    cur = self.head.next
-    #    for i in range(0, self.length, n):
-    #        print(cur.val)
-    #        for j in range(0, n):
-    #            cur = cur.next
+    def pickevery(self, n):
+        a = []
+        cur = self.head.next
+        for i in range(0, self.length, n):
+                a.append(cur.val)
+                for j in range(0, n):
+                    cur = cur.next
+        return a
 
 ################################################################################
 # TEST CASES
@@ -651,16 +653,30 @@ def test_reverse():
 # MAIN
 def main():
     for t in [test_subscript_access,
-              test_custor_based_access,
-              test_stringification,
-              test_single_element_manipulation,
-              test_predicates,
-              test_queries,
-              test_bulk_operations,
-              test_iteration,
-              test_reverse]:
-         t()
-         say_success()
+             test_custor_based_access,
+             test_stringification,
+             test_single_element_manipulation,
+             test_predicates,
+             test_queries,
+             test_bulk_operations,
+             test_iteration,
+             test_reverse]:
+        t()
+        say_success()
+
+    # l = LinkedList()
+    # for i in range(0, 10):
+    #     l.append(i)
+
+    # print(l.pickevery(1))
+    # print(l.pickevery(2))
+    # print(l.pickevery(3))
+    # print(l.pickevery(4))
+    # print(l.pickevery(5))
+    # print(l.pickevery(6))
+    # print(l.pickevery(7))
+    # print(l.pickevery(8))
+    # print(l.pickevery(9))
 
 if __name__ == '__main__':
     main()

@@ -174,8 +174,7 @@ def test_extension():
 
     for i in range(nitems):
         tc.assertEqual(h[i], i)
-
-
+        
 # points: 20
 def test_deletion():
     tc = TestCase()
