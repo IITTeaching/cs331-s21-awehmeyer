@@ -21,25 +21,72 @@ class Heap:
     @staticmethod
     def _right(idx):
         return idx*2+2
+    
+    def swap(self, parent, child):
+        parval = self.data[parent]
+        chival = self.data[child]
+        self.data[parent] = chival
+        self.data[child] = parval
 
-    def heapify(self, idx=0):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+    def pos_exists(self, idx):
+        return idx < len(self)
 
-    def add(self, x):
-        ### BEGIN SOLUTION
-        ### END SOLUTION
-        pass
+    ### IMPLEMENT
+    def heapify(self, idx=0, percolateDown = True):
+        if percolateDown:
+            self.percolate_down(idx)
+        else:
+            self.percolate_up(idx)
+
+    def percolate_up(self, idx):
+        p = self._parent(idx)
+        if p >= 0:
+            pval = self.key(self.data[p])
+            curval = self.key(self.data[idx])
+            if pval < curval: ###change
+                    self.swap(p, idx)
+                    self.percolate_up(p)
+
+    def percolate_down(self, idx):
+        lc = self._left(idx)
+        rc = self._right(idx)
+
+        if self.pos_exists(idx):
+            curval = self.key(self.data[idx])
+
+            if self.pos_exists(lc):
+                lval = self.key(self.data[lc])
+
+                if self.pos_exists(rc):
+                    rval = self.key(self.data[rc])
+
+                    if rval > lval:
+                        if rval > curval:
+                            self.swap(idx, rc)
+                            self.percolate_down(rc)
+
+                    elif lval > curval:
+                        self.swap(idx, lc)
+                        self.percolate_down(lc)
+                    
+                elif lval > curval:
+                    self.swap(idx, lc)
+                    self.percolate_down(lc)
+
+    ### IMPLEMENT
+    def add(self, item):
+        self.data.append(item)
+        self.heapify(len(self)-1, False) ###up
 
     def peek(self):
         return self.data[0]
 
+    ### IMPLEMENT
     def pop(self):
         ret = self.data[0]
         self.data[0] = self.data[len(self.data)-1]
         del self.data[len(self.data)-1]
-        self.heapify()
+        self.heapify() ###down
         return ret
 
     def __iter__(self):
@@ -131,9 +178,41 @@ def test_key_heap_5():
 # 2. MEDIAN
 ################################################################################
 def running_medians(iterable):
-    ### BEGIN SOLUTION
-    ### END SOLUTION
-    pass
+    minheap = Heap(lambda x: x * -1)
+    maxheap = Heap(lambda x:x)
+    curmed = 0
+    arr = []
+    for i in iterable:
+        if i > curmed:
+            minheap.add(i)
+        else:
+            maxheap.add(i)
+
+        if len(minheap) == len(maxheap):
+            curmed = (maxheap.peek() + minheap.peek()) / 2
+        elif abs(len(minheap) - len(maxheap)) == 1:
+            if len(minheap) > len(maxheap):
+                curmed = minheap.peek()
+            else:
+                curmed = maxheap.peek()
+        else:
+            if len(minheap) > len(maxheap):
+                maxheap.add(minheap.pop())
+            else:
+                minheap.add(maxheap.pop())
+
+            ###repeat checks
+            if len(minheap) == len(maxheap):
+                curmed = (maxheap.peek() + minheap.peek()) / 2
+            elif abs(len(minheap) - len(maxheap)) == 1:
+                if len(minheap) > len(maxheap):
+                    curmed = minheap.peek()
+                else:
+                    curmed = maxheap.peek()
+
+        arr.append(curmed)
+
+    return arr
 
 ################################################################################
 # TESTS
@@ -176,9 +255,20 @@ def test_median_3():
 # 3. TOP-K
 ################################################################################
 def topk(items, k, keyf):
-    ### BEGIN SOLUTION
-    ### END SOLUTION
-    pass
+    heap = Heap(lambda x: keyf(x) * -1) ###reverse
+    for i in items:
+        if len(heap) < k:
+            heap.add(i)
+        else:
+            small = keyf(heap.peek())
+            cur = keyf(i)
+
+            if cur > small:
+                heap.pop()
+                heap.add(i)
+    
+    arr = list(reversed(list(heap)))
+    return arr
 
 ################################################################################
 # TESTS
