@@ -47,12 +47,35 @@ class HBStree:
         """
         return len(self.root_versions)
 
+    ### Modified
+    def find(self, key):
+        cur = self.root_versions[-1]
+        while cur:
+            if key > cur.val():
+                cur = cur.right()
+            elif key < cur.val():
+                cur = cur.left()
+            else:
+                return cur
+        raise KeyError
+
     def __getitem__(self, key):
         """
         Returns key if key exists in the current version of the tree. Raise a
         KeyError, if key does not exist.
         """
         # BEGIN SOLUTION
+
+        cur = self.root_versions[-1]
+        while cur:
+            if key > cur.val():
+                cur = cur.right()
+            elif key < cur.val():
+                cur = cur.left()
+            else:
+                return cur.val()
+        raise KeyError
+
         # END SOLUTION
 
     def __contains__(self, el):
@@ -60,6 +83,17 @@ class HBStree:
         Return True if el exists in the current version of the tree.
         """
         # BEGIN SOLUTION
+
+        cur = self.root_versions[-1]
+        while cur:
+            if el > cur.val():
+                cur = cur.right()
+            elif el < cur.val():
+                cur = cur.left()
+            else:
+                return True
+        return False
+
         # END SOLUTION
 
     def insert(self,key):
@@ -69,6 +103,45 @@ class HBStree:
         from creating a new version.
         """
         # BEGIN SOLUTION
+
+        cur = self.root_versions[-1]
+
+        if cur == None:
+            cur = self.INode(key, None, None)
+            self.root_versions.append(cur)
+            return
+        
+        stack = []
+        while cur:
+            stack.append(cur)
+            if key < cur.val:
+                cur = cur.left
+            elif key > cur.val:
+                cur = cur.right
+            elif cur.val == key:
+                return
+            else:
+                break
+        
+        parent = stack.pop()
+        child_node = self.INode(key, None, None)
+
+        left = key < parent.val
+
+        if left:
+            parent_node = self.INode(parent.val, child_node, parent.right)
+        else:
+            parent_node = self.INode(parent.val, parent.left, child_node)
+        
+        while len(stack) > 0:
+            parent = stack.pop()
+            if parent.val > parent_node.val:
+                parent_node = self.INode(parent.val, parent_node, parent.right)
+            else:
+                parent_node = self.INode(parent.val, parent.left, parent_node)
+        
+        self.root_versions.append(parent_node)
+
         # END SOLUTION
 
     def delete(self,key):
@@ -135,6 +208,13 @@ class HBStree:
         """
         return self.version_iter()
 
+    def rec_inorder(self, node, l):
+        if node:
+            self.rec_inorder(node.left, l)
+            l.append(node.val)
+            self.rec_inorder(node.right, l)
+        return l
+
     def version_iter(self, timetravel=0):
         """
         Return an iterator that allows sorted access to the nodes of a past
@@ -145,6 +225,12 @@ class HBStree:
         if timetravel < 0 or timetravel >= len(self.root_versions):
             raise IndexError(f"valid versions for time travel are 0 to {len(self.root_versions) -1}, but was {timetravel}")
         # BEGIN SOLUTION
+
+        node = self.root_versions[self.num_versions()-timetravel-1]
+        l = self.rec_inorder(node, [])
+        for i in l:
+            yield i
+
         # END SOLUTION
 
     @staticmethod
