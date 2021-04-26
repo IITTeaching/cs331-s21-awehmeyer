@@ -68,12 +68,12 @@ class HBStree:
 
         cur = self.root_versions[-1]
         while cur:
-            if key > cur.val():
-                cur = cur.right()
-            elif key < cur.val():
-                cur = cur.left()
+            if key > cur.val:
+                cur = cur.right
+            elif key < cur.val:
+                cur = cur.left
             else:
-                return cur.val()
+                return cur.val
         raise KeyError
 
         # END SOLUTION
@@ -86,10 +86,10 @@ class HBStree:
 
         cur = self.root_versions[-1]
         while cur:
-            if el > cur.val():
-                cur = cur.right()
-            elif el < cur.val():
-                cur = cur.left()
+            if el > cur.val:
+                cur = cur.right
+            elif el < cur.val:
+                cur = cur.left
             else:
                 return True
         return False
@@ -119,7 +119,7 @@ class HBStree:
             elif key > cur.val:
                 cur = cur.right
             elif cur.val == key:
-                return
+                return ### already in the tree
             else:
                 break
         
@@ -147,7 +147,62 @@ class HBStree:
     def delete(self,key):
         """Delete key from the tree, creating a new version of the tree. If key does not exist in the current version of the tree, then do nothing and refrain from creating a new version."""
         # BEGIN SOLUTION
+
+        if not self.__contains__(key):
+            return
+        cur = self.root_versions[-1]
+        self.root_versions.append(self.deleteHelper(cur, key))
+
         # END SOLUTION
+
+    def deleteHelper(self, cur, key):
+        if cur == None:
+            return
+        
+        stack = []
+        while cur:
+            stack.append(cur)
+            if key < cur.val:
+                cur = cur.left
+            elif key > cur.val:
+                cur = cur.right
+            elif cur.val == key:
+                break
+            else:
+                return ### does not exist
+        
+        to_delete = stack.pop()
+
+        if to_delete.left and not to_delete.right:
+            to_delete = to_delete.left
+        elif not to_delete.left and to_delete.right:
+            to_delete = to_delete.right
+        elif to_delete.left and to_delete.right:
+            temp = to_delete.left
+            while temp.right:
+                temp = temp.right
+            to_delete = self.INode(temp.val, self.deleteHelper(to_delete.left, temp.val), to_delete.right)
+        else:
+            orig_val = to_delete.val
+            to_delete = None    
+        
+        child = to_delete
+
+        if len(stack) == 0:
+            return child
+
+        while len(stack) > 0:
+            parent = stack.pop()
+            if child == None and orig_val < parent.val:
+                child = self.INode(parent.val, child, parent.right)
+            elif child == None and orig_val > parent.val:
+                child = self.INode(parent.val, parent.left, child)
+            elif child.val < parent.val:
+                child = self.INode(parent.val, child, parent.right)
+            else:
+                child = self.INode(parent.val, parent.left, child)
+        
+        return child
 
     @staticmethod
     def subtree_size(node):
@@ -224,6 +279,7 @@ class HBStree:
         """
         if timetravel < 0 or timetravel >= len(self.root_versions):
             raise IndexError(f"valid versions for time travel are 0 to {len(self.root_versions) -1}, but was {timetravel}")
+       
         # BEGIN SOLUTION
 
         node = self.root_versions[self.num_versions()-timetravel-1]
