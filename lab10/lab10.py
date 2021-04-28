@@ -14,8 +14,9 @@ class AVLTree:
             self.left, n.left, self.right, n.right = n.left, n.right, n, self.right
 
         def rotate_left(self):
-            ### BEGIN SOLUTION
-            ### END SOLUTION
+            n = self.right
+            self.val, n.val = n.val, self.val
+            self.right, n.right, self.left, n.left = n.right, n.left, n, self.left
 
         @staticmethod
         def height(n):
@@ -28,19 +29,36 @@ class AVLTree:
         self.size = 0
         self.root = None
 
+    def balance_factor(self, node):
+        if node == None:
+            return 0
+        else:
+            lefth = self.height_rec(node.left)
+            righth = self.height_rec(node.right)
+            return lefth - righth
+
     @staticmethod
     def rebalance(t):
         ### BEGIN SOLUTION
+
+        pass
+
         ### END SOLUTION
 
     def add(self, val):
         assert(val not in self)
         ### BEGIN SOLUTION
+
+        pass
+
         ### END SOLUTION
 
     def __delitem__(self, val):
         assert(val in self)
         ### BEGIN SOLUTION
+
+        pass
+
         ### END SOLUTION
 
     def __contains__(self, val):
@@ -89,14 +107,15 @@ class AVLTree:
                 repr_str += '{val:^{width}}'.format(val=n.val, width=width//2**level)
         print(repr_str)
 
-    def height(self):
-        """Returns the height of the longest branch of the tree."""
-        def height_rec(t):
+    def height_rec(self, t):
             if not t:
                 return 0
             else:
                 return max(1+height_rec(t.left), 1+height_rec(t.right))
-        return height_rec(self.root)
+
+    def height(self):
+        """Returns the height of the longest branch of the tree."""
+        return self.height_rec(self.root)
 
 ################################################################################
 # TEST CASES
