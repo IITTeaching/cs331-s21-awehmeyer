@@ -35,7 +35,7 @@ class AVLTree:
         else:
             lefth = self.height_rec(node.left)
             righth = self.height_rec(node.right)
-            return lefth - righth
+            return righth - lefth
 
     @staticmethod
     def rebalance(t):
@@ -45,12 +45,31 @@ class AVLTree:
 
         ### END SOLUTION
 
-    def add(self, val):
+    def add(self, val): ###rework this all
         assert(val not in self)
         ### BEGIN SOLUTION
 
-        pass
+        def add_rec(node):
+            if not node:
+                return AVLTree.Node(val)
+            elif val < node.val:
+                node.left = add_rec(node.left)
+                bf = self.balance_factor(node)
 
+                if bf == -2: ##left heavy
+                    # assume LL situation
+                    node.rotate_right()
+
+
+            else:
+                node.right = add_rec(node.right)
+                bf = self.balance_factor(node)
+                if bf == 2: ## right heavy
+                    # assume have RR situation
+                    node.rotate_left()
+
+        self.root = add_rec(self.root)
+        self.size += 1
         ### END SOLUTION
 
     def __delitem__(self, val):
