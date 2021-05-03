@@ -29,54 +29,98 @@ class AVLTree:
         self.size = 0
         self.root = None
 
-    def balance_factor(self, node):
+    @staticmethod
+    def balance_factor(node):
         if node == None:
-            return 0
+            return 1
         else:
-            lefth = self.height_rec(node.left)
-            righth = self.height_rec(node.right)
-            return righth - lefth
+            lefth = AVLTree.height_rec(node.left)
+            righth = AVLTree.height_rec(node.right)
+            return lefth - righth
 
     @staticmethod
     def rebalance(t):
         ### BEGIN SOLUTION
 
-        pass
+        if t:
+            bf = AVLTree.balance_factor(t)
+            if bf > 1: # left heavy
+                bf_inner = AVLTree.balance_factor(t.left)
+                if bf_inner < 0:
+                    t.left.rotate_left()
+                t.rotate_right()
+            elif bf < -1: # left heavy
+                bf_inner = AVLTree.balance_factor(t.right)
+                if bf_inner > 0:
+                    t.right.rotate_right()
+                t.rotate_left()
 
         ### END SOLUTION
 
-    def add(self, val): ###rework this all
-        assert(val not in self)
+    def add(self, val): # need to redo balance
+        
         ### BEGIN SOLUTION
-
-        def add_rec(node):
+        def add_rec(node, val):
             if not node:
                 return AVLTree.Node(val)
             elif val < node.val:
-                node.left = add_rec(node.left)
-                bf = self.balance_factor(node)
+                left = add_rec(node.left, val)
+                node.left = left
+                AVLTree.rebalance(node)
+                return node
+            elif val > node.val:
+                right = add_rec(node.right, val)
+                node.right = right
+                AVLTree.rebalance(node)
+                return node
 
-                if bf == -2: ##left heavy
-                    # assume LL situation
-                    node.rotate_right()
+        assert(val not in self)
 
-
-            else:
-                node.right = add_rec(node.right)
-                bf = self.balance_factor(node)
-                if bf == 2: ## right heavy
-                    # assume have RR situation
-                    node.rotate_left()
-
-        self.root = add_rec(self.root)
+        self.root = add_rec(self.root, val)
         self.size += 1
         ### END SOLUTION
 
-    def __delitem__(self, val):
-        assert(val in self)
+    def __delitem__(self, val): # need to redo balance
+        
         ### BEGIN SOLUTION
+        def rec_del(node, val):
+            if not node:
+                return node
+            elif val < node.val:
+                node.left = rec_del(node.left, val)
+                return node
+            elif val > node.val:
+                node.right = rec_del(node.right, val)
+                return node
+            else:
+                if not node.left and not node.right:
+                    return None
+                elif not node.left:
+                    temp = node.right
+                    node = None
+                    AVLTree.rebalance(temp)
+                    return temp
+                elif not node.right:
+                    temp = node.left
+                    node = None
+                    AVLTree.rebalance(temp)
+                    return temp
+                else:
+                    temp = minval(node.right)
+                    if temp:
+                        node.val = temp.val
+                        node.right = rec_del(node.right, temp.val)
+                        return node
+                    else:
+                        return temp
 
-        pass
+        def minval(node):
+            while node.left:
+                node = node.left
+            return node
+        
+        root = rec_del(self.root, val)
+        self.size += -1
 
         ### END SOLUTION
 
@@ -126,11 +170,12 @@ class AVLTree:
                 repr_str += '{val:^{width}}'.format(val=n.val, width=width//2**level)
         print(repr_str)
 
-    def height_rec(self, t):
+    @staticmethod
+    def height_rec(t):
             if not t:
                 return 0
             else:
-                return max(1+height_rec(t.left), 1+height_rec(t.right))
+                return max(1+AVLTree.height_rec(t.left), 1+AVLTree.height_rec(t.right))
 
     def height(self):
         """Returns the height of the longest branch of the tree."""
@@ -203,16 +248,20 @@ def test_rl_fix_simple():
 # 30 points
 def test_key_order_after_ops():
     tc = TestCase()
-    vals = list(range(0, 100000000, 333333))
+    vals = list(range(0, 50, 1))
     random.shuffle(vals)
 
     t = AVLTree()
     for x in vals:
         t.add(x)
 
-    for _ in range(len(vals) // 3):
+    t.pprint()
+
+    for _ in range(len(vals) //3):
         to_rem = vals.pop(random.randrange(len(vals)))
         del t[to_rem]
+        #print("-----------------------")
+        #t.pprint()
 
     vals.sort()
 
