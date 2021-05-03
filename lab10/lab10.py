@@ -88,9 +88,11 @@ class AVLTree:
                 return node
             elif val < node.val:
                 node.left = rec_del(node.left, val)
+                #AVLTree.rebalance(node)
                 return node
             elif val > node.val:
                 node.right = rec_del(node.right, val)
+                #AVLTree.rebalance(node)
                 return node
             else:
                 if not node.left and not node.right:
@@ -255,13 +257,9 @@ def test_key_order_after_ops():
     for x in vals:
         t.add(x)
 
-    t.pprint()
-
     for _ in range(len(vals) //3):
         to_rem = vals.pop(random.randrange(len(vals)))
         del t[to_rem]
-        #print("-----------------------")
-        #t.pprint()
 
     vals.sort()
 
@@ -274,6 +272,9 @@ def test_stress_testing():
     tc = TestCase()
 
     def check_balance(t):
+        val = abs(height(t.left) - height(t.right))
+        if val == 2:
+            print("found")
         tc.assertLess(abs(height(t.left) - height(t.right)), 2, 'Tree is out of balance')
 
     t = AVLTree()
