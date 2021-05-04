@@ -88,11 +88,11 @@ class AVLTree:
                 return node
             elif val < node.val:
                 node.left = rec_del(node.left, val)
-                #AVLTree.rebalance(node)
+                AVLTree.rebalance(node)
                 return node
             elif val > node.val:
                 node.right = rec_del(node.right, val)
-                #AVLTree.rebalance(node)
+                AVLTree.rebalance(node)
                 return node
             else:
                 if not node.left and not node.right:
@@ -108,18 +108,24 @@ class AVLTree:
                     AVLTree.rebalance(temp)
                     return temp
                 else:
-                    temp = minval(node.right)
+                    arr = minval(node.right)
+                    temp = arr.pop()
                     if temp:
                         node.val = temp.val
                         node.right = rec_del(node.right, temp.val)
+                        while len(arr) > 0:
+                            AVLTree.rebalance(arr.pop())
                         return node
                     else:
                         return temp
 
         def minval(node):
+            arr = []
+            arr.append(node)
             while node.left:
                 node = node.left
-            return node
+                arr.append(node)
+            return arr
         
         root = rec_del(self.root, val)
         self.size += -1
