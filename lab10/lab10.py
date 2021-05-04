@@ -86,48 +86,31 @@ class AVLTree:
         def rec_del(node, val):
             if not node:
                 return node
+            elif node.val == val:
+                if not node.left and not node.right:
+                    return None
+                elif node.right and not node.left:
+                    return node.right
+                elif node.left and not node.right:
+                    return node.left
+                else:
+                    temp = node.left
+                    while temp.right:
+                        temp = temp.right
+                    node.val = temp.val
+                    node.left = rec_del(node.left, temp.val)
+                    AVLTree.rebalance(node)
+                    return node
             elif val < node.val:
                 node.left = rec_del(node.left, val)
                 AVLTree.rebalance(node)
                 return node
-            elif val > node.val:
+            else: #val > node.val
                 node.right = rec_del(node.right, val)
                 AVLTree.rebalance(node)
                 return node
-            else:
-                if not node.left and not node.right:
-                    return None
-                elif not node.left:
-                    temp = node.right
-                    node = None
-                    AVLTree.rebalance(temp)
-                    return temp
-                elif not node.right:
-                    temp = node.left
-                    node = None
-                    AVLTree.rebalance(temp)
-                    return temp
-                else:
-                    arr = minval(node.right)
-                    temp = arr.pop()
-                    if temp:
-                        node.val = temp.val
-                        node.right = rec_del(node.right, temp.val)
-                        while len(arr) > 0:
-                            AVLTree.rebalance(arr.pop())
-                        return node
-                    else:
-                        return temp
 
-        def minval(node):
-            arr = []
-            arr.append(node)
-            while node.left:
-                node = node.left
-                arr.append(node)
-            return arr
-        
-        root = rec_del(self.root, val)
+        self.root = rec_del(self.root, val)
         self.size += -1
 
         ### END SOLUTION
