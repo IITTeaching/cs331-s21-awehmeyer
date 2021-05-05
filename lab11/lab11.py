@@ -8,35 +8,70 @@ def qsort(lst,low,high,pivot_fn):
     ### BEGIN SOLUTION
     if low < high:
         p = pivot_fn(lst, low, high)
-        qsort(lst, low, p-1)
-        qsort(lst, p+1, high)
+        qsort(lst, low, p-1, pivot_fn)
+        qsort(lst, p+1, high, pivot_fn)
     ### END SOLUTION
-
-def swap(lst, a, b):
-    lst[a], lst[b] = lst[b], lst[a]
-    return lst
 
 def pivot_first(lst,low,high):
     ### BEGIN SOLUTION
-    pivot = lst[0]
-    i = low
-    for j in range(low, high+1):
-        if lst[j] < pivot:
+    pivot = lst[low]
+    i = high
+    for j in range(high, low, -1):
+        if lst[j] > pivot:
             lst[i], lst[j] = lst[j], lst[i]
-            i += 1
-    lst[i], lst[high] = lst[high], lst[a]
+            i -= 1
+    lst[i], lst[low] = lst[low], lst[i]
     return i
     ### END SOLUTION
 
 def pivot_random(lst,low,high):
     ### BEGIN SOLUTION
-    pass
+    rand = random.randint(low, high)
+    pivot = lst[rand]
+    lst[rand], lst[low] = lst[low], lst[rand]
+    i = high
+    for j in range(high, low, -1):
+        if lst[j] > pivot:
+            lst[i], lst[j] = lst[j], lst[i]
+            i -= 1
+    lst[i], lst[low] = lst[low], lst[i]
+    return i
     ### END SOLUTION
 
 def pivot_median_of_three(lst,low,high):
     ### BEGIN SOLUTION
-    pass
+    med = median(lst, low, (low+high)//2, high)
+    pivot = lst[med]
+    lst[med], lst[low] = lst[low], lst[med]
+    i = high
+    for j in range(high, low, -1):
+        if lst[j] > pivot:
+            lst[i], lst[j] = lst[j], lst[i]
+            i -= 1
+    lst[i], lst[low] = lst[low], lst[i]
+    return i
     ### END SOLUTION
+
+def median(lst, a, b, c):
+    a = lst[a]
+    b = lst[b]
+    c = lst[c]
+    if a > b:
+        if a < c:
+            return a
+        elif b > c:
+            return b
+        else:
+            return c
+    else:
+        if a > c:
+            return a
+        elif b < c:
+            return b
+        else:
+            return c
+    
+
 
 ################################################################################
 # TEST CASES
