@@ -1,21 +1,24 @@
 import urllib
 import urllib.request
 
-def book_to_words(book_url='https://www.gutenberg.org/files/84/84-0.txt'):
+### Submethod to accept a string ###
+def radix_a_string(words):
+    wordsascii = words.encode('ascii','replace')
+    wordsbytes = wordsascii.split()
+    return radix_byte_list(wordsbytes)
+
+### Submethod to accept a book url ###
+def radix_a_book(book_url='https://www.gutenberg.org/files/84/84-0.txt'):
     booktxt = urllib.request.urlopen(book_url).read().decode()
     bookascii = booktxt.encode('ascii','replace')
-    return bookascii.split()
+    bookbytes = bookascii.split()
+    return radix_byte_list(bookbytes)
 
-def radix_a_book(book_url='https://www.gutenberg.org/files/84/84-0.txt'):
-    print("Book to ASCII: STARTING")
-    ascii_chars = book_to_words(book_url)
-    print("Book to ASCII: DONE")
-    print("Sorting: STARTING")
-    for i in range(0, 31):
-        ascii_chars = toArray(toQueue(ascii_chars, i), len(ascii_chars))
-        print(f'{i/31 * 100}%')
-    print("Sorting: DONE")
-    return ascii_chars
+### Main sort method to implement radix sort ###
+def radix_byte_list(btye_list):
+    for i in range(0, 31): ###SET LENGTH OF WORDS###
+        btye_list = toArray(toQueue(btye_list, i), len(btye_list))
+    return btye_list
 
 def get_digit(word, k):
     if k >= len(word):
@@ -41,20 +44,27 @@ def toArray(queues, number_of_values):
     return nums
 
 
-### MAIN PROGRAM ###
+def test1():
+    words = "g f e d c b a"
+    byte_list = radix_a_string(words)
+    for i in range(len(byte_list)-1):
+        assert(byte_list[i] < byte_list[i+1])
 
-#sort = radix_a_book()
+def test2():
+    radix_a_book()
 
-### TEST CASES ###
+def say_test(f):
+    print(80 * "#" + "\n" + f.__name__ + "\n" + 80 * "#" + "\n")
 
-def sort(words):
-    print("Sorting: STARTING")
-    for i in range(0, 31):
-        words = toArray(toQueue(words, i), len(words))
-        print(f'{i//31 * 100}%')
-    print("Sorting: DONE")
-    return words
+def say_success():
+    print("----> SUCCESS")
 
-words = [b'Gnd', b'Bnd', b'And', b'End', b'Dnd', b'Fnd', b'Bnd']
-words = sort(words)
-print(words)
+def main():
+    for t in [test1, test2]:
+        say_test(t)
+        t()
+        say_success()
+    print(80 * "#" + "\nALL TEST CASES FINISHED SUCCESSFULLY!\n" + 80 * "#")
+
+if __name__ == '__main__':
+    main()
