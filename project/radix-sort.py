@@ -33,21 +33,22 @@ def to_strings(byte_list):
 
 ### Main sort method to implement radix sort ###
 def radix_byte_list(byte_list):
-    num = max(byte_list)
-    for i in range(0, num): ###SET LENGTH OF WORDS###
-        byte_list = toArray(toQueue(byte_list, i), len(byte_list))
+    max_length = max(byte_list)
+    for i in range(0, max_length):
+        byte_list = toArray(toQueue(byte_list, i, max_length), len(byte_list))
     return byte_list
 
-def get_digit(word, k):
-    if k >= len(word):
-        return 0 ### ascii code for 'SPACE'
+def get_digit(word, k, max_length):
+    place = max_length - k - 1
+    if place >= len(word):
+        return 0
     else:
-        return word[k]
+        return word[place]
 
-def toQueue(arr, k):
+def toQueue(arr, k, max_length):
     queue = [ [] for i in range(256) ]
     for i in range(0, len(arr)):
-        digit = get_digit(arr[i], k)
+        digit = get_digit(arr[i], k, max_length)
         queue[digit].append(arr[i])
     return queue
 
@@ -67,19 +68,14 @@ def test1():
     for i in range(len(result)-1):
         assert(result[i] < result[i+1])
 
-    words = "aa b"
+    words = "Britney Debi Fred Delana Song Sonny Riley Patti Jeanie Mimi Bret Garnett Penni Cathleen Ayako Alaina Lynette Von Blanche Jadwiga"
     result = radix_a_string(words)
     for i in range(len(result)-1):
         assert(result[i] < result[i+1])
 
-    words = "Britney Debi Fred Delana Song Sonny Riley Patti Jeanie Mimi Bret Garnett Penni Cathleen Ayako Alaina Lynette Von Blanche Jadwiga"
-    result = radix_a_string(words)
-    for i in range(len(result)-1):
-        #asserst(byte_list[i] < byte_list[i+1])
-        pass
-
 def test2():
-    radix_a_book()
+    result = radix_a_book()
+    assert(True)
 
 def say_test(f):
     print(80 * "#" + "\n" + f.__name__ + "\n" + 80 * "#" + "\n")
