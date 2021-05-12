@@ -1,11 +1,21 @@
 import urllib
 import urllib.request
 
+### Find the number of iterations necessary ###
+def max(lst):
+    maximum = len(lst[0])
+    for i in range(1, len(lst)):
+        if len(lst[i]) > maximum:
+            maximum = len(lst[i])
+    return maximum
+
 ### Submethod to accept a string ###
 def radix_a_string(words):
     wordsascii = words.encode('ascii','replace')
     wordsbytes = wordsascii.split()
-    return radix_byte_list(wordsbytes)
+    result = radix_byte_list(wordsbytes)
+    strings = to_strings(result)
+    return strings
 
 ### Submethod to accept a book url ###
 def radix_a_book(book_url='https://www.gutenberg.org/files/84/84-0.txt'):
@@ -14,15 +24,23 @@ def radix_a_book(book_url='https://www.gutenberg.org/files/84/84-0.txt'):
     bookbytes = bookascii.split()
     return radix_byte_list(bookbytes)
 
+### Turns an array of bytes into an array of strings ###
+def to_strings(byte_list):
+    arr = []
+    for i in range(len(byte_list)):
+        arr.append(byte_list[i].decode("ascii"))
+    return arr
+
 ### Main sort method to implement radix sort ###
-def radix_byte_list(btye_list):
-    for i in range(0, 31): ###SET LENGTH OF WORDS###
-        btye_list = toArray(toQueue(btye_list, i), len(btye_list))
-    return btye_list
+def radix_byte_list(byte_list):
+    num = max(byte_list)
+    for i in range(0, num): ###SET LENGTH OF WORDS###
+        byte_list = toArray(toQueue(byte_list, i), len(byte_list))
+    return byte_list
 
 def get_digit(word, k):
     if k >= len(word):
-        return 0 ### ascii code for 'NULL'
+        return 0 ### ascii code for 'SPACE'
     else:
         return word[k]
 
@@ -43,12 +61,22 @@ def toArray(queues, number_of_values):
             index += 1
     return nums
 
-
 def test1():
     words = "g f e d c b a"
-    byte_list = radix_a_string(words)
-    for i in range(len(byte_list)-1):
-        assert(byte_list[i] < byte_list[i+1])
+    result = radix_a_string(words)
+    for i in range(len(result)-1):
+        assert(result[i] < result[i+1])
+
+    words = "aa b"
+    result = radix_a_string(words)
+    for i in range(len(result)-1):
+        assert(result[i] < result[i+1])
+
+    words = "Britney Debi Fred Delana Song Sonny Riley Patti Jeanie Mimi Bret Garnett Penni Cathleen Ayako Alaina Lynette Von Blanche Jadwiga"
+    result = radix_a_string(words)
+    for i in range(len(result)-1):
+        #asserst(byte_list[i] < byte_list[i+1])
+        pass
 
 def test2():
     radix_a_book()
